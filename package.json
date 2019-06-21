@@ -1,0 +1,11 @@
+{
+  "name": "WoDHelper",
+  "version": "1.0.0",
+  "description": "World of Darkness R/P/S and More!",
+  "main": "bot.js",
+  "author": "Cody Wagar",
+  "dependencies": {
+    "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
+    "winston": "^3.2.1"
+  }
+}
