@@ -7,7 +7,92 @@ var symbol1 = 'default';
 var symbol2 = 'default';
 var msg1 = ' '
 var sendMessage = ' ';
-var resultMessage = ' '; 
+var resultMessage = ' ';
+let counter = 0;
+var insertText = "";
+
+function rollDice (dicePool, difficulty, spec) {
+  /* Variable Declaration */
+  specCheck = spec;
+  counter++;
+  const dieArray = [];
+  let tensRolled = 0;
+  let explodingTens = 0;
+  let subtractingOnes = 0;
+  let onesRolled = 0;
+  let successesRolled = 0;
+  let failuresRolled = 0;
+  let totalRolled = 0;
+  let successes = 0;
+  let botch = false;
+  var specMsg;
+  /* End Variable Declaration */
+
+  /* Verify Inputs */
+  if (difficulty > 10 || difficulty < 2) {
+    insertText = 'Difficulty Out of Range (2 to 10).';
+    return
+  }
+  if (dicePool > 1000 || dicePool < 1) {
+    insertText = 'Dice Pool out of Range (1 to 1000)';
+    return
+  }
+  /* End Verify Inputs */
+
+  /* Roll Dice */
+  for (let i = 0; i < dicePool; i++) {
+    dieArray.push(parseInt(Math.floor(Math.random() * 10) + 1))
+
+    if (dieArray[i] >= difficulty) {
+      successesRolled++;
+      totalRolled++;
+    }
+
+    if (dieArray[i] === 10) {
+      tensRolled++;
+    }
+
+    if (dieArray[i] < difficulty) {
+      failuresRolled++;
+      totalRolled++;
+    }
+
+    if (dieArray[i] === 1) {
+      onesRolled++;
+      subtractingOnes++;
+    }
+  }
+
+  /* End Roll Dice */
+
+  // Sort array from Lowest to Highest
+  dieArray.sort((a, b) => a - b)
+
+  if (specCheck == 's') {
+    specMsg = 'was'
+  } else { specMsg = 'was not' }
+
+  /* Parse Results with w20 Rules */
+  if (specCheck == 's'){
+    successes = successesRolled + tensRolled - onesRolled;
+  }else{
+    successes = successesRolled - onesRolled;
+  }
+
+  if (successesRolled <= 0 && onesRolled >= 1){
+    botch = true;
+    insertText = `ROLL ${counter}: ${dieArray.length} dice rolled ${dieArray} at Difficulty ${difficulty}. Parsed result is: ${successes} Successes. ${tensRolled} of the dice were 10's, and ${onesRolled} were 1's. This ${specMsg} a Specialty roll, and has resulted in a BOTCH!`;
+  }else if(successes < 1){
+    botch = false;
+    insertText = `ROLL ${counter}: ${dieArray.length} dice rolled ${dieArray} at Difficulty ${difficulty}. Parsed result is: ${successes} Successes. ${tensRolled} of the dice were 10's, and ${onesRolled} were 1's. This ${specMsg} a Specialty roll, and has resulted in a FAILURE.`;
+  }else{
+    botch = false;
+    insertText = `ROLL ${counter}: ${dieArray.length} dice rolled ${dieArray} at Difficulty ${difficulty}. Parsed result is: ${successes} Successes. ${tensRolled} of the dice were 10's, and ${onesRolled} were 1's. This ${specMsg} a Specialty roll, and has resulted in a SUCCESS.`;
+  }
+
+
+  /* End Parse and Output */
+}
 
 
 function chops(max) {
@@ -16,7 +101,7 @@ function chops(max) {
 
 
 function randomTest(sign = -1) {
-    
+
     // reset the dice to 0
     roll1 = 0;
     roll2 = 0;
@@ -78,7 +163,7 @@ bot.on('ready', function (evt) {
     logger.info('Logged in as: ');
     logger.info(bot.username + ' - (' + bot.id + ')');
 
-    
+
 });
 
     bot.on('message', function (user, userID, channelID, message, evt) {
@@ -87,6 +172,9 @@ bot.on('ready', function (evt) {
         if (message.substring(0, 1) == '!') {
             var args = message.substring(1).split(' ');
             var cmd = args[0];
+            var cmd2 = args[1];
+            var cmd3 = args[2];
+            var cmd4 = args[3];
 
             args = args.splice(1);
 
@@ -95,7 +183,7 @@ bot.on('ready', function (evt) {
                 case 'commands':
                     bot.sendMessage({
                         to: channelID,
-                        message: ' You can choose any of the following: Choose a Throw: !rock, !paper, !scissors. Or Random both sides: !rps'
+                        message: ' You can choose any of the following: Choose a Throw: !rock, !paper, !scissors. Or Random both sides: !rps - OR !rolldice #[pool] #[diff] s[if specialty] '
                     });
                     break;
 
@@ -104,8 +192,8 @@ bot.on('ready', function (evt) {
                     randomTest();
                     sendMessage = user + ': ' + msg1 + resultMessage;
                     bot.sendMessage({
-                        to: channelID, 
-                        message: sendMessage 
+                        to: channelID,
+                        message: sendMessage
                     });
                     break;
 
@@ -134,12 +222,15 @@ bot.on('ready', function (evt) {
                         message: sendMessage
                     });
                     break;
-                case 'diff6': // Difficulty 6 D10 Roll - Not Yet Implemented or Coded
-                    sendMessage = ;
+                case 'roll': // Difficulty 6 D10 Roll - Not Yet Implemented or Coded
+                    rollDice(cmd2, cmd3, cmd4);
+                    sendMessage = user + ': ' + msg1 + insertText;
                     bot.sendMessage({
                         to: channelID,
                         message: sendMessage
+
                     });
+                    sendMessage = ' ';
                     break;
             }
         }
