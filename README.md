@@ -9,7 +9,7 @@
  
  # !scissors - Run Rock Paper Scissors with scissors as your chosen symbol.
  
- # !roll - Roll Werewolf: the Apocalypse (20th Anniversary Edition) Dice, in the following format: !roll <DicePool Number> <Difficulty Number> <Optional: If the roll is a specialty, follow the first two arguments with a lower-case s to invoke Specialty parsing.>
+ # !roll - Roll Werewolf: the Apocalypse (20th Anniversary Edition) Dice, in the following format: !roll [DicePool Number] [Difficulty Number] [Optional: If the roll is a specialty, follow the first two arguments with a lower-case s to invoke Specialty parsing.]
  
  # !commands - List commands.
  
